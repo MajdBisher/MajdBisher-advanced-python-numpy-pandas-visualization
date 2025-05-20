@@ -1,0 +1,122 @@
+%matplotlib inline
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+```
+print(" Name: Majd Bisher")
+
+"## Part 1 - Numpy"
+array_1 = np.arange(1, 21).reshape(4, 5)
+print(array_1)
+```
+
+array_2 = np.arange(63, 63 + 18, 2).reshape(3, 3)
+print(array_2)
+```
+product = np.dot(array_2, array_2.T)
+print(product)
+```
+
+concatenated = np.concatenate((array_2, product), axis=1)
+print(concatenated)
+```
+
+random_array = np.random.rand(4, 4)
+print(random_array)
+```
+
+scaled_array = random_array * (90 - 20) + 20
+print(scaled_array)
+```
+
+print("Max values of rows:", np.max(scaled_array, axis=1))
+print("Max values of columns:", np.max(scaled_array, axis=0))
+print("Max value of the whole array:", np.max(scaled_array))
+```
+
+print("Median values of rows:", np.median(scaled_array, axis=1))
+print("Median values of columns:", np.median(scaled_array, axis=0))
+print("Median value of the whole array:", np.median(scaled_array))
+```
+
+## Part 2 - Pandas
+data = pd.read_csv("./hw2_winequality.csv")
+print(data.head())
+```
+
+print(data.head(12))
+```
+
+for column in data.columns:
+    print(f"{column}: {data[column].dtype}")
+```
+
+columns = ["fixed_acidity", "volatile_acidity", "citric_acid", "residual_sugar"]
+new_df = data[columns]
+print(new_df.head())
+```
+
+subset_df = new_df.head(40)
+print(subset_df)
+```
+
+array_from_column = data["quality"].to_numpy()
+print(array_from_column)
+```
+
+## Part 3 - Visualization
+
+plt.scatter(data["fixed_acidity"], data["citric_acid"], label="Citric Acid")
+plt.scatter(data["fixed_acidity"], data["residual_sugar"], label="Residual Sugar")
+plt.title("Scatter Plot of Acidity vs. Other Features")
+plt.xlabel("Fixed Acidity")
+plt.ylabel("Values")
+plt.legend()
+plt.show()
+```
+
+fig, ax = plt.subplots(2, 2)
+ax[0, 0].hist(data["fixed_acidity"], bins=10)
+ax[0, 0].set_title("Histogram of Fixed Acidity")
+
+ax[0, 1].hist(data["citric_acid"], bins=10)
+ax[0, 1].set_title("Histogram of Citric Acid")
+
+ax[1, 0].scatter(data["fixed_acidity"], data["citric_acid"])
+ax[1, 0].set_title("Scatter Plot (X: Acidity, Y: Citric)")
+
+ax[1, 1].scatter(data["citric_acid"], data["fixed_acidity"])
+ax[1, 1].set_title("Scatter Plot (X: Citric, Y: Acidity)")
+
+plt.tight_layout()
+plt.show()
+```
+
+quality_counts = data["is_high_quality"].value_counts()
+plt.pie(quality_counts, labels=quality_counts.index, autopct="%1.1f%%")
+plt.title("High Quality Distribution")
+plt.show()
+```
+
+## Part 4 - Visualization - Correlation Heatmap
+
+correlation_matrix = data.corr()
+sns.heatmap(correlation_matrix, annot=True, vmin=-1, vmax=1)
+plt.title("Correlation Heatmap (-1 to 1)")
+plt.show()
+
+sns.heatmap(correlation_matrix, annot=True, vmin=0, vmax=1)
+plt.title("Correlation Heatmap (0 to 1)")
+plt.show()
+```
+
+highest_corr = correlation_matrix.abs().unstack().sort_values(ascending=False)
+highest_corr = highest_corr[highest_corr < 1].idxmax()
+
+plt.scatter(data[highest_corr[0]], data[highest_corr[1]])
+plt.title(f"Scatter Plot of {highest_corr[0]} vs {highest_corr[1]}")
+plt.xlabel(highest_corr[0])
+plt.ylabel(highest_corr[1])
+plt.show()
